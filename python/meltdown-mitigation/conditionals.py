@@ -1,5 +1,6 @@
 """Functions to prevent a nuclear meltdown."""
 
+import math
 
 def is_criticality_balanced(temperature, neutrons_emitted):
     """Verify criticality is balanced.
@@ -11,11 +12,12 @@ def is_criticality_balanced(temperature, neutrons_emitted):
     A reactor is said to be critical if it satisfies the following conditions:
     - The temperature is less than 800 K.
     - The number of neutrons emitted per second is greater than 500.
-    - The product of temperature and neutrons emitted per second is less than 500000.
+    - The product of temperature and neutrons emitted per second is less than 500,000.
     """
 
-    pass
-
+    if float(temperature) < 800.0 and float(neutrons_emitted) > 500.0 and math.prod([temperature, neutrons_emitted]) < 500000.0:
+        return True
+    else: return False
 
 def reactor_efficiency(voltage, current, theoretical_max_power):
     """Assess reactor efficiency zone.
@@ -36,8 +38,20 @@ def reactor_efficiency(voltage, current, theoretical_max_power):
     (generated power/ theoretical max power)*100
     where generated power = voltage * current
     """
+    generated_power = voltage * current
+    percentage = (generated_power / theoretical_max_power) * 100
 
-    pass
+    if percentage >= 80:
+        return "green"
+
+    elif percentage < 80 and percentage >= 60:
+        return "orange"
+
+    elif percentage >= 30 and percentage < 60:
+        return "red"
+
+    else: return "black"
+
 
 
 def fail_safe(temperature, neutrons_produced_per_second, threshold):
@@ -52,5 +66,13 @@ def fail_safe(temperature, neutrons_produced_per_second, threshold):
     2. 'NORMAL' -> `temperature * neutrons per second` +/- 10% of `threshold`
     3. 'DANGER' -> `temperature * neutrons per second` is not in the above-stated ranges
     """
+    percentage = temperature * neutrons_produced_per_second
 
-    pass
+    if percentage < threshold * 0.9:
+        return "LOW"
+
+    elif threshold * 0.9 <= percentage <= threshold * 1.1 :
+        return "NORMAL"
+
+    else:
+        return "DANGER"
